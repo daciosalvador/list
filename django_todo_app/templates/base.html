@@ -1,0 +1,74 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Box Icons CSS -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+  <title>ToDoList</title>
+</head>
+<body class="bg-[#cfcfcf] flex flex-col items-center justify-center gap-4 h-screen">
+  <!-- header -->
+  <header class="bg-white shadow-lg w-10/12 h-auto rounded-3xl flex flex-col sm:flex-row justify-between items-center p-5 m-7 md:w-3/6">
+    <h1 class="text-blue-600 font-bold text-[40px]">Lista de Tarefas</h1>
+    <a class="bg-blue-600 py-2 px-4 text-white font-semibold rounded-2xl text-lg mt-4 flex items-center gap-2" href="{% url 'add_task' %}">
+      <i class="bx bxs-plus-circle bx-sm"></i> Adicionar
+    </a>
+  </header>
+
+  {% block content %}
+
+  {% endblock content %}
+
+  <!-- Box Icons -->
+  <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+  <!-- Adicione as bibliotecas jQuery e jQuery UI -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+
+  <script>
+    let timerInterval;
+    let timeLeft = sessionStorage.getItem('timeLeft');
+
+    // Verifica se há tempo restante no sessionStorage e inicia o temporizador
+    if (timeLeft) {
+      startTimer();
+    }
+
+    function startTimer() {
+      if (!timeLeft) {
+        timeLeft = 1500; // 25 minutos em segundos
+        sessionStorage.setItem('timeLeft', timeLeft);
+      }
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        sessionStorage.setItem('timeLeft', timeLeft);
+        if (timeLeft >= 0) {
+          let minutes = Math.floor(timeLeft / 60);
+          let seconds = timeLeft % 60;
+          document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+        } else {
+          clearInterval(timerInterval);
+          sessionStorage.removeItem('timeLeft');
+          alert("Pomodoro concluído!");
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(timerInterval);
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      sessionStorage.removeItem('timeLeft');
+      timeLeft = 1500;
+      document.getElementById("timer").innerText = "25:00";
+    }
+  </script>
+</body>
+</html>
